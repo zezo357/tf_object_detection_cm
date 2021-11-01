@@ -120,7 +120,9 @@ def process_detections(input_tfrecord_path, model, categories, draw_option, draw
             
             if decoded_dict:
                 image               = decoded_dict[fields.InputDataFields.image]
-                input_tensor        = np.expand_dims(Image.open(io.BytesIO(image)), axis=0)
+                img                   = Image.open(io.BytesIO(image)).convert("RGB")
+                input_tensor     = tf.convert_to_tensor(img)
+                input_tensor     = input_tensor[tf.newaxis, ...]
                 groundtruth_boxes   = decoded_dict[fields.InputDataFields.groundtruth_boxes]
                 groundtruth_classes = decoded_dict[fields.InputDataFields.groundtruth_classes].astype('uint8')
                 detections          = model(input_tensor) # Run model inference
@@ -236,6 +238,7 @@ def draw(image_name, image_path, image, categories, groundtruth_boxes, groundtru
 
     under "if scores is None:" (line 1182)
     '''
+    image = np.asarray(image)
     image_viz = image.copy()
     viz_utils.visualize_boxes_and_labels_on_image_array(
             image_viz,
