@@ -121,6 +121,7 @@ def process_detections(input_tfrecord_path, model, categories, draw_option, draw
             if decoded_dict:
                 image               = decoded_dict[fields.InputDataFields.image]
                 img                   = Image.open(io.BytesIO(image)).convert("RGB")
+                img = np.asarray(img)
                 input_tensor     = tf.convert_to_tensor(img)
                 input_tensor     = input_tensor[tf.newaxis, ...]
                 groundtruth_boxes   = decoded_dict[fields.InputDataFields.groundtruth_boxes]
